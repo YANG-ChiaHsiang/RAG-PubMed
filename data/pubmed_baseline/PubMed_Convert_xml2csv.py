@@ -94,7 +94,7 @@ def main():
         print(f'No XML files found in {xml_dir}.')
         return
 
-    with multiprocessing.Pool(processes=18) as pool:
+    with multiprocessing.Pool(processes=4) as pool:
         tasks = [(xml_file, csv_dir) for xml_file in xml_files]
         pool.starmap(process_xml_file, tasks)
 

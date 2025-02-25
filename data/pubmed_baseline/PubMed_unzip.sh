@@ -10,6 +10,6 @@ target_dir="./xml"
 mkdir -p "$target_dir"
 
 # 使用 parallel 和 gunzip 解壓縮所有 .gz 檔案到目標目錄
-find "$source_dir" -name "*.gz" | parallel gunzip -c {} \> "$target_dir/{/.}"
+find "$source_dir" -name "*.gz" | parallel -j 4 gunzip -c {} \> "$target_dir/{/.}"
 
 echo "All .gz files in $source_dir have been extracted to $target_dir using parallel."
