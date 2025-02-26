@@ -6,7 +6,7 @@ from transformers import AutoTokenizer, AutoModel
 from tqdm import tqdm
 
 # 設定裝置
-device = "cuda:2" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
 
 # 設定模型
 model_name = "abhinand/MedEmbed-base-v0.1"
