@@ -51,7 +51,7 @@ After downloading the `.gz` files, they need to be extracted.
 ## 3. Run Embedding to vector database (fiass)
 1. run embedding to database 
     ```bash
-    nohup python vector_embedding_start_end.py --start 1 --end 100 --output_dir './output' --batch_size 5000 > vector_embedding_1_100_output.log 2>&1 &
+    nohup python vector_embedding_start_end.py --start 1 --end 100 --output_dir './output' --batch_size 5000 > ./logs/vector_embedding_1_100_output.log 2>&1 &
     ```
 
 ## Additional Notes
