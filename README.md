@@ -48,6 +48,12 @@ After downloading the `.gz` files, they need to be extracted.
 
     - This command converts the extracted XML files to CSV format.
 
+## 3. Run Embedding to vector database (fiass)
+1. run embedding to database 
+    ```bash
+    nohup python vector_embedding_start_end.py --start 1 --end 100 --output_dir './output' --batch_size 5000 > vector_embedding_1_100_output.log 2>&1 &
+    ```
+
 ## Additional Notes
 
 - Ensure that the `PubMed_get.sh` script is executable (`chmod +x PubMed_get.sh`).
