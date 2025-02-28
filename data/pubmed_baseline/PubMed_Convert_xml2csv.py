@@ -6,11 +6,11 @@ import glob
 
 def xml_to_csv(xml_file, csv_file):
     """
-    將 PubMed XML 檔案轉換為 CSV 檔案。
+    Convert PubMed XML file to CSV file.
 
     Args:
-        xml_file (str): XML 檔案的絕對路徑。
-        csv_file (str): CSV 檔案的絕對路徑。
+        xml_file (str): Absolute path of the XML file.
+        csv_file (str): Absolute path of the CSV file.
     """
     try:
         # Load and parse the XML file
@@ -71,15 +71,16 @@ def xml_to_csv(xml_file, csv_file):
 
 def process_xml_file(xml_file, csv_dir):
     """
-    處理單個 XML 檔案。
+    Process a single XML file.
 
     Args:
-        xml_file (str): XML 檔案的絕對路徑。
-        csv_dir (str): CSV 檔案目錄的絕對路徑。
+        xml_file (str): Absolute path to the XML file.
+        csv_dir (str): Absolute path to the CSV directory.
     """
     filename = os.path.splitext(os.path.basename(xml_file))[0]
     csv_file = os.path.join(csv_dir, f'{filename}.csv')
     xml_to_csv(xml_file, csv_file)
+
 
 def main():
     xml_dir = 'xml'
@@ -101,4 +102,4 @@ def main():
     print('All XML files have been processed.')
 
 if __name__ == '__main__':
-    main()
+    
