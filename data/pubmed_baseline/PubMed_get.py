@@ -1,6 +1,11 @@
 import os
 import argparse
 from ftplib import FTP
+from dotenv import load_dotenv
+
+
+load_dotenv()
+e_mail = os.getenv("MAIL_ACCOUNT")
 
 def download_pubmed_files(start_file, end_file, local_dir="./data/pubmed_baseline"):
     """Downloads PubMed baseline files from FTP."""
@@ -12,7 +17,7 @@ def download_pubmed_files(start_file, end_file, local_dir="./data/pubmed_baselin
     try:
         # Connect to FTP
         ftp = FTP(FTP_HOST)
-        ftp.login(user="anonymous", passwd="yang900412@gmail.com")  # Use your email as the password
+        ftp.login(user="anonymous", passwd=e_mail)  # Use your email as the password
         ftp.cwd(FTP_DIR)
 
         os.makedirs(local_dir, exist_ok=True)

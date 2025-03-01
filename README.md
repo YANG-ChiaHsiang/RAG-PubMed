@@ -1,71 +1,81 @@
 # RAG-PubMed
 
-## 1. Retrieving XML.gz Files via FTP
+This project aims to create a paper recommendation system using the PubMed database. The system adopts RAG (Retrieval-Augmented Generation) technology and uses MedEmbed as a specialized embedding model for medical and clinical information retrieval. Additionally, the system uses a localized faiss as the vector database. The PubMed database contains over 20 million paper records, using the titles and abstracts of the papers as query objects.
 
-PubMed baseline data is downloaded via FTP from the NCBI server.
+![Architecture](https://github.com/YANG-ChiaHsiang/RAG-PubMed/blob/main/RAG.png)
 
-### Steps:
 
-1.  Navigate to the `data/pubmed_baseline` directory:
+## Running with Conda Environment
 
+1. Create a Conda environment
+    ```bash
+    conda create -n rag python=3.9
+    conda activate rag
+    ```
+2. Install packages
+    ```bash
+    pip install transformers torch einops faiss-gpu polars python-dotenv
+    pip install 'numpy<2'
+    ```
+
+## Implementation Steps
+
+### 1. Data Preprocessing
+
+1. Create a `.env` file in the project directory:
+    ```
+    OPENAI_API_KEY=your_openai_api_key
+    MAIL_ACCOUNT=your_email@example.com
+    ```
+    Replace `your_openai_api_key` with your actual OpenAI API key and `your_email@example.com` with your email account.
+
+2. Navigate to the `data/pubmed_baseline` directory:
     ```bash
     cd data/pubmed_baseline
     ```
 
-2.  Run the `PubMed_get.sh` script in the background using `nohup` to download the files:
-
+3. Obtain XML.gz files via FTP and run the `PubMed_get.sh` script in the background using `nohup`:
+    [NCBI FTP](https://ftp.ncbi.nlm.nih.gov/pubmed/baseline/)
     ```bash
     nohup ./PubMed_get.sh > PubMed_get_output.log 2>&1 &
     ```
+    - This command executes the script, redirects the output to `PubMed_get_output.log`, and runs it in the background.
 
-    - This command executes the script, redirects output to `PubMed_get_output.log`, and runs it in the background.
-
-## 2. Extracting .gz Files
-
-After downloading the `.gz` files, they need to be extracted.
-
-### Steps:
-
-1.  Navigate to the directory containing the `.gz` files (if not already there):
-
-    ```bash
-    cd data/pubmed_baseline
-    ```
-
-2.  Run the `PubMed_unzip.sh` command to extract each `.gz` file. You can use a loop to process all files:
-
+4. Unzip the downloaded `.gz` files by running the `PubMed_unzip.sh` command:
     ```bash
     nohup ./PubMed_unzip.sh > PubMed_unzip_output.log 2>&1 &
     ```
+    - This command unzips all files with the `.gz` extension.
 
-    - This loop iterates through all files with the `.gz` extension and extracts them.
-
-3.  Convert XML to CSV file using the following command:
-
+5. Convert the unzipped XML files to CSV format using the following command:
     ```bash
     nohup python PubMed_Convert_xml2csv.py > PubMed_Convert_output.log 2>&1 &
     ```
+    - This command converts the unzipped XML files to CSV format.
 
-    - This command converts the extracted XML files to CSV format.
-
-## 3. Run Embedding to vector database (fiass)
-1. run embedding to database 
+6. Merge all CSV files into one file by running the `PubMed_merge_csv.py` script:
     ```bash
-    nohup python vector_embedding_start_end.py --start 1 --end 100 --output_dir './output' --batch_size 5000 > ./logs/vector_embedding_1_100_output.log 2>&1 &
+    nohup python PubMed_merge_csv.py --csv_folder './csv' --output_file './merged_output.csv' > PubMed_merge_output.log 2>&1 &
+    ```
+    - This command merges all CSV files into one file and logs the output to `PubMed_merge_output.log`.
+
+7. Filter articles by year using `PutMed_after_Year.py`. Example:
+    ```bash
+    nohup python PutMed_after_Year.py --merge_csv_file './merged_output.csv' --after_year 2020 --output_csv_file 'merged_2020.csv' > PubMed_after_Year.log 2>&1 &
+    ```
+    - This command filters articles published after the specified year in the merged CSV file and logs the output to `PubMed_after_Year.log`.
+
+### 2. Store Embedding Vectors in the Vector Database (faiss)
+
+#### Using 0, 1 GPU
+
+1. Set visible GPUs:
+    ```bash
+    export CUDA_VISIBLE_DEVICES=0,1
     ```
 
-## Additional Notes
-
-- Ensure that the `PubMed_get.sh` script is executable (`chmod +x PubMed_get.sh`).
-- The extraction process may take a significant amount of time depending on the size and number of `.gz` files.
-- Consider using parallel processing tools like `parallel` to speed up the extraction process for large datasets.
-- Add further steps for parsing the extracted XML files and processing the data as needed for your specific use case.
-- You can add additional error handling to the bash scripts.
-- You can add additional steps to clean up the .gz files after they are extracted.
-- If you encounter any issues with the FTP connection, check your network settings and the NCBI FTP server status.
-- It's a good practice to add information on how to install any dependencies needed to run the scripts.
-- It's a good practice to add information on how to install any dependencies needed to run the scripts.
-- If you are running this on a cloud environment you may want to add a step to copy the files to cloud storage.
-- If you are running this on a cloud environment you may want to add a step to copy the files to cloud storage.
-- Consider using a virtual environment to manage dependencies for this project.
-- Consider using a virtual environment to manage dependencies for this project.
+2. Store embedding vectors in the vector database:
+    ```bash
+    chmod +x run_embedding_to_vector.sh 
+    nohup ./run_embedding_to_vector.sh > output/2020/embedding_output.log 2>&1 &
+    ```
