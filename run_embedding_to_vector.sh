@@ -28,7 +28,7 @@ mkdir -p "$OUTPUT_DIR"
 chmod +x vector_embedding/generate_faiss_embeddings.py
 
 # Execute the Python script
-python vector_embedding/generate_faiss_embeddings.py \
+python -u vector_embedding/generate_faiss_embeddings.py \
     --csv_path "$CSV_PATH" \
     --output_dir "$OUTPUT_DIR" \
     --batch_size "$BATCH_SIZE" \
